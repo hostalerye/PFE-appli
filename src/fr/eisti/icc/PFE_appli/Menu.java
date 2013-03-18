@@ -15,9 +15,7 @@ public class Menu extends Activity{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
 
-        TextView text = new TextView(this);
-        text.setText("Hello World, Android");
-        setContentView(text);
     }
 }
