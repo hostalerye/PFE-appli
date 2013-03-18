@@ -13,16 +13,16 @@
     <TextView
             android:layout_width="215dp"
             android:layout_height="wrap_content"
-            android:text="Rendre disponible"
+            android:text="@string/server"
             android:id="@+id/textView" android:layout_row="0"
             android:layout_column="0"
             android:textStyle="bold"
-            android:phoneNumber="false" android:typeface="serif"
+            android:typeface="serif"
             android:layout_columnSpan="2" android:gravity="center"/>
     <TextView
             android:layout_width="113dp"
             android:layout_height="wrap_content"
-            android:text="Données :"
+            android:text="@string/data"
             android:id="@+id/textView1" android:layout_row="1"
             android:layout_column="0" android:typeface="serif"
             android:textStyle="bold"
@@ -30,22 +30,25 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="43dp"
-            android:text="SMS"
+            android:text="@string/data_sms"
             android:id="@+id/textView2" android:layout_row="2"
             android:layout_column="1" android:gravity="center_vertical"
             android:typeface="serif"
             android:layout_gravity="center_horizontal"/>
     <RadioGroup
+            android:id="@+id/dataRadioGroup"
             android:layout_width="74dp"
             android:layout_height="wrap_content" android:layout_row="2"
             android:layout_column="2" android:layout_rowSpan="2"
             android:layout_gravity="right">
         <RadioButton
+                android:id="@+id/dataSMS"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true" android:layout_gravity="right"/>
 
         <RadioButton
+                android:id="@+id/dataData"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"/>
@@ -53,14 +56,14 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Data"
+            android:text="@string/data_data"
             android:id="@+id/textView3" android:layout_row="3"
             android:layout_column="1" android:layout_gravity="center"
             android:typeface="serif"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lancer un calcul :"
+            android:text="@string/launch_example"
             android:id="@+id/textView4" android:layout_row="4"
             android:layout_column="0" android:layout_columnSpan="3"
             android:typeface="serif"
@@ -69,7 +72,7 @@
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Afficher liste des calculs disponibles"
+            android:text="@string/launch_example_button"
             android:id="@+id/button" android:layout_row="5"
             android:layout_column="0" android:layout_columnSpan="3"
             android:typeface="serif"
