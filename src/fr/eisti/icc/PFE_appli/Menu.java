@@ -16,6 +16,19 @@ import android.widget.Toast;
  * To change this template use File | Settings | File Templates.
  */
 public class Menu extends Activity{
+
+    private String launchBenchmark(CharSequence bench_name){
+        if(bench_name.equals("Pi")) {
+
+        } else if(bench_name.equals("Matrix")) {
+
+        } else if (bench_name.equals("Bench")) {
+
+        }
+
+        return "";
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +48,10 @@ public class Menu extends Activity{
                         .setItems(items,
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int item) {
-
+                                        String result = launchBenchmark(items[item]);
+                                        Toast.makeText(Menu.this,
+                                                result, Toast.LENGTH_SHORT)
+                                                .show();
                                     }
                                 });
 
