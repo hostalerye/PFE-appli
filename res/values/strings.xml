@@ -9,4 +9,7 @@
     <string name="launch_example_button">
         Afficher la liste des calculs disponibles
     </string>
+    <string name="launch_dialog_title">
+        Launch :
+    </string>
 </resources>
