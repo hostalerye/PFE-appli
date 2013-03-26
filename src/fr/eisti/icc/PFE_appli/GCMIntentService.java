@@ -2,6 +2,7 @@ package fr.eisti.icc.PFE_appli;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import com.google.android.gcm.GCMBaseIntentService;
 import org.apache.http.client.HttpClient;
@@ -63,12 +64,12 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     @Override
     protected void onMessage(Context context, Intent intent) {
-
+        Bundle extras = intent.getExtras();
     }
 
     @Override
     protected void onError(Context context, String errorId) {
-
+        Log.e("GCM Error", errorId);
     }
 
     @Override
