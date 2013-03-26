@@ -27,4 +27,10 @@
     <string name="filename">
         cluster_config
     </string>
+    <string name="nodeServer">
+        192.168.129.12:3000
+    </string>
+    <string name="senderId">
+        1035823212986
+    </string>
 </resources>

@@ -11,32 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.google.android.gcm.GCMRegistrar;
 
 import java.io.*;
 
 public class Menu extends Activity{
-
-    private String getPhoneNumber(){
-        String result = "";
-        // Read phoneNumber from internal storage
-        try {
-            FileInputStream fis = openFileInput(getString(R.string.filename));
-            InputStreamReader reader = new
-                    InputStreamReader(fis);
-            BufferedReader buff = new BufferedReader(
-                    reader);
-            result = buff.readLine();
-            buff.close();
-            reader.close();
-            fis.close();
-        } catch (FileNotFoundException e) {
-            Log.e("FileNotFound","Can't find config file");
-        } catch (IOException e){
-            Log.e("IO","Can't open config file");
-        }
-
-        return result;
-    }
 
     private String launchBenchmark(CharSequence bench_name){
         if(bench_name.equals("Pi")) {
@@ -137,5 +116,14 @@ public class Menu extends Activity{
         setContentView(R.layout.main);
         launchButtonSetUp();
         phoneButtonSetUp();
+
+        GCMRegistrar.checkDevice(this);
+        GCMRegistrar.checkManifest(this);
+        final String regId = GCMRegistrar.getRegistrationId(this);
+        if (regId.equals("")) {
+            GCMRegistrar.register(this, getString(R.string.senderId));
+        } else {
+            Log.i("REGISTER", "Already registered");
+        }
     }
 }
