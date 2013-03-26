@@ -10,6 +10,21 @@
         Afficher la liste des calculs disponibles
     </string>
     <string name="launch_dialog_title">
-        Launch :
+        Lancer :
+    </string>
+    <string name="phone_button">
+        Entrer le numéro de téléphone
+    </string>
+    <string name="phone_number">
+        Numéro de téléphone
+    </string>
+    <string name="register">
+        Enregistrer
+    </string>
+    <string name="cancel">
+        Annuler
+    </string>
+    <string name="filename">
+        cluster_config
     </string>
 </resources>
