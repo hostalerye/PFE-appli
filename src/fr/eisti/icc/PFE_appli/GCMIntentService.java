@@ -8,16 +8,57 @@ import com.google.android.gcm.GCMBaseIntentService;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.util.InetAddressUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GCMIntentService extends GCMBaseIntentService {
+
+    private void returnPing(Bundle extras){
+        String ping_id = extras.getString("ping_id");
+
+        Map<String,String> tmp = new HashMap<String, String>();
+        tmp.put("ping_id",ping_id);
+        tmp.put("phone_number",getPhoneNumber());
+        tmp.put("ip",getIP());
+
+        JSONObject payload = new JSONObject(tmp);
+
+        postRequest("/messages/ping",payload);
+    }
+
+    private String getIP(){
+        String sAddr = "";
+        try {
+            List<NetworkInterface> interfaces = Collections.list(NetworkInterface
+                    .getNetworkInterfaces());
+            for(NetworkInterface intf : interfaces){
+                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+                for (InetAddress addr : addrs) {
+                    if (!addr.isLoopbackAddress()) {
+                        sAddr = addr.getHostAddress().toUpperCase();
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            Log.e("INET SOCKET","Can't connect to socket to determine IP " +
+                    "adress");
+        }
+
+        return sAddr;
+    }
+
     private String getPhoneNumber(){
         String result = "";
         // Read phoneNumber from internal storage
@@ -65,6 +106,11 @@ public class GCMIntentService extends GCMBaseIntentService {
     @Override
     protected void onMessage(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
+        int status = extras.getInt("status_code");
+        switch(status){
+            case 42: returnPing(extras);break;
+            default: Log.e("ERROR","Wrong status code");
+        }
     }
 
     @Override
@@ -78,13 +124,13 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         // Fill map with infos
         Map<String, String> tmp = new HashMap<String,String>();
-        tmp.put("regId",regId);
-        tmp.put("phoneNumber",getPhoneNumber());
+        tmp.put("reg_id",regId);
+        tmp.put("phone_number",getPhoneNumber());
 
         // Transform map into JSONObject
         JSONObject upload = new JSONObject(tmp);
 
-        postRequest("/register",upload);
+        postRequest("/devices/register",upload);
 
     }
 
@@ -94,12 +140,12 @@ public class GCMIntentService extends GCMBaseIntentService {
 
         // Fill map with infos
         Map<String, String> tmp = new HashMap<String,String>();
-        tmp.put("regId",regId);
+        tmp.put("reg_id",regId);
 
         // Transform map into JSONObject
         JSONObject upload = new JSONObject(tmp);
 
-        postRequest("/unregister",upload);
+        postRequest("/devices/unregister",upload);
     }
 
 }
