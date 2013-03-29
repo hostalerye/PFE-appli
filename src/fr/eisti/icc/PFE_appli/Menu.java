@@ -3,8 +3,10 @@ package fr.eisti.icc.PFE_appli;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -121,9 +123,12 @@ public class Menu extends Activity{
         GCMRegistrar.checkManifest(this);
         final String regId = GCMRegistrar.getRegistrationId(this);
         if (regId.equals("")) {
+            Log.i("GCM", "Trying register with " + getString(R.string
+                    .senderId));
             GCMRegistrar.register(this, getString(R.string.senderId));
         } else {
             Log.i("REGISTER", "Already registered");
+            GCMRegistrar.unregister(this);
         }
     }
 }

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="fr.eisti.icc.PFE_appli">
 
-    <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>
+    <uses-sdk android:minSdkVersion="17" android:targetSdkVersion="17"/>
     <permission
             android:name="fr.eisti.icc.PFE_appli.permission.C2D_MESSAGE"
             android:protectionLevel="signature" />
@@ -14,7 +14,7 @@
     <!-- GCM connects to Google Services. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- GCM requires a Google account. -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!--<uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
     <!-- Keeps the processor from sleeping when a message is received. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
