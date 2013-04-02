@@ -24,8 +24,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Menu extends Activity{
+
+    Utils utils;
 
     private String launchBenchmark(CharSequence bench_name){
         if(bench_name.equals("Pi")) {
@@ -141,6 +145,9 @@ public class Menu extends Activity{
         phoneButtonSetUp();
         registerDevice();
 
+        utils = new Utils(getApplicationContext());
+
+
         new RetreiveFeedTask().execute();
     }
 
@@ -148,31 +155,39 @@ public class Menu extends Activity{
 
         @Override
         protected Object doInBackground(String... params) {
-            HttpClient client = new DefaultHttpClient();
-            HttpGet get = new HttpGet(getString(R.string.nodeServer) +
-                    "/devices/available");
+            Map<String,String> tmp = new HashMap();
+            tmp.put("phone_number", utils.getPhoneNumber());
+            JSONObject json = new JSONObject(tmp);
+            HttpResponse response = utils.getRequest("/devices/available",
+                    json);
 
-            HttpResponse response;
-            try {
-                response = client.execute(get);
-
+            Log.i("RESPONSE","GOT IT");
                 while(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK){
                 }
+            Log.i("LOOP OVER","LOOP OVER");
 
-                JSONArray json = new JSONArray(EntityUtils.toString(response
+            JSONArray json2 = null;
+            try {
+                json2 = new JSONArray(EntityUtils.toString(response
                         .getEntity
-                        ()));
-                JSONObject tmp;
-                for(int i=0; i<json.length(); i++){
-                    tmp = json.getJSONObject(i);
-                    Log.i("GET RESPONSE", tmp.getString("ip") + "  " + tmp
-                            .getString("phone_number"));
-                }
-            } catch (IOException e) {
-                Log.i("GET REQUEST","Can't execute get");
+                                ()));
             } catch (JSONException e) {
-                Log.i("GET RESPONSE","Can't parse json");
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
+            JSONObject tmp_json;
+            for(int i=0; i<json2.length(); i++){
+                try {
+                    tmp_json = json2.getJSONObject(i);
+                    Log.i("GET RESPONSE", tmp_json.getString("ip") + "  " +
+                            tmp_json.getString("phone_number"));
+                } catch (JSONException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+
+            }
+
             return null;
         }
     }

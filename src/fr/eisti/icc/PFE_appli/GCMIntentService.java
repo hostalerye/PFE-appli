@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class GCMIntentService extends GCMBaseIntentService {
 
-    Utils utils = new Utils();
+    Utils utils = new Utils(getBaseContext());
 
     private void returnPing(Bundle extras){
         String ping_id = extras.getString("ping_id");
