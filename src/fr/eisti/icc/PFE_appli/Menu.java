@@ -112,13 +112,7 @@ public class Menu extends Activity{
 
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        launchButtonSetUp();
-        phoneButtonSetUp();
-
+    public void registerDevice(){
         GCMRegistrar.checkDevice(this);
         GCMRegistrar.checkManifest(this);
         final String regId = GCMRegistrar.getRegistrationId(this);
@@ -128,7 +122,17 @@ public class Menu extends Activity{
             GCMRegistrar.register(this, getString(R.string.senderId));
         } else {
             Log.i("REGISTER", "Already registered");
-            GCMRegistrar.unregister(this);
         }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        launchButtonSetUp();
+        phoneButtonSetUp();
+        registerDevice();
+
+
     }
 }
