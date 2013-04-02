@@ -106,8 +106,9 @@ public class GCMIntentService extends GCMBaseIntentService {
     @Override
     protected void onMessage(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
-        int status = extras.getInt("status_code");
-        switch(status){
+        String status = extras.getString("status_code");
+
+        switch(Integer.parseInt(status)){
             case 42: returnPing(extras);break;
             default: Log.e("ERROR","Wrong status code");
         }
@@ -120,8 +121,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     @Override
     protected void onRegistered(Context context, String regId) {
-        Log.i("REGISTER SUCCESS",regId);
-
         // Fill map with infos
         Map<String, String> tmp = new HashMap<String,String>();
         tmp.put("reg_id",regId);
@@ -136,8 +135,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     @Override
     protected void onUnregistered(Context context, String regId) {
-        Log.i("UNREGISTER SUCCESS",regId);
-
         // Fill map with infos
         Map<String, String> tmp = new HashMap<String,String>();
         tmp.put("reg_id",regId);

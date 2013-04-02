@@ -3,10 +3,9 @@ package fr.eisti.icc.PFE_appli;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +13,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.google.android.gcm.GCMRegistrar;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
 
@@ -133,6 +144,41 @@ public class Menu extends Activity{
         phoneButtonSetUp();
         registerDevice();
 
-
+        new RetreiveFeedTask().execute();
     }
+
+    class RetreiveFeedTask extends AsyncTask<String, Void, Object> {
+
+        @Override
+        protected Object doInBackground(String... params) {
+            HttpClient client = new DefaultHttpClient();
+            HttpGet get = new HttpGet(getString(R.string.nodeServer) +
+                    "/devices/available");
+
+            HttpResponse response;
+            try {
+                response = client.execute(get);
+
+                while(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK){
+                }
+
+                JSONArray json = new JSONArray(EntityUtils.toString(response
+                        .getEntity
+                        ()));
+                JSONObject tmp;
+                for(int i=0; i<json.length(); i++){
+                    tmp = json.getJSONObject(i);
+                    Log.i("GET RESPONSE", tmp.getString("ip") + "  " + tmp
+                            .getString("phone_number"));
+                }
+            } catch (IOException e) {
+                Log.i("GET REQUEST","Can't execute get");
+            } catch (JSONException e) {
+                Log.i("GET RESPONSE","Can't parse json");
+            }
+            return null;
+        }
+    }
+
+
 }
