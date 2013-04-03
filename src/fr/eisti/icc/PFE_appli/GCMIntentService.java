@@ -12,11 +12,12 @@ import java.util.Map;
 
 public class GCMIntentService extends GCMBaseIntentService {
 
-    Utils utils = new Utils(getBaseContext());
+    Utils utils;
 
     private void returnPing(Bundle extras){
+        Log.i("PING MESSAGE","TRYING");
+        utils = new Utils(getBaseContext());
         String ping_id = extras.getString("ping_id");
-
         Map<String,String> tmp = new HashMap<String, String>();
         tmp.put("ping_id",ping_id);
         tmp.put("phone_number",utils.getPhoneNumber());
@@ -25,6 +26,7 @@ public class GCMIntentService extends GCMBaseIntentService {
         JSONObject payload = new JSONObject(tmp);
 
         utils.postRequest("/messages/ping",payload);
+        Log.i("RETURN PING","SUCCESS");
     }
 
     @Override
@@ -45,6 +47,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     @Override
     protected void onRegistered(Context context, String regId) {
+        utils = new Utils(getBaseContext());
         // Fill map with infos
         Map<String, String> tmp = new HashMap<String,String>();
         tmp.put("reg_id",regId);
@@ -59,6 +62,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     @Override
     protected void onUnregistered(Context context, String regId) {
+        utils = new Utils(getBaseContext());
         // Fill map with infos
         Map<String, String> tmp = new HashMap<String,String>();
         tmp.put("reg_id",regId);

@@ -10,6 +10,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -101,17 +102,18 @@ public class Utils {
         }
     }
 
-    public HttpResponse getRequest(String url, JSONObject json){
-        Log.i("GET REQUEST","TROLOLOLOLO");
+    public HttpResponse getRequest(String url, String label, String value){
         HttpClient client = new DefaultHttpClient();
-        HttpGet get = new HttpGet(context.getResources().getString(R.string
-                .nodeServer) + url);
-        HttpParams params = new BasicHttpParams();
 
-        // Add the JSON to the POST request
-        params.setParameter("json",json);
-        //get.setHeader("Content-type", "application/json");
-        //get.setHeader("Accept", "application/json");
+        String requestUrl = context.getResources().getString(R.string
+                .nodeServer) +
+                url;
+
+        if(!value.equals("")){
+            requestUrl += "?" + label + "=" + value;
+        }
+
+        HttpGet get = new HttpGet(requestUrl);
 
         HttpResponse response = null;
         try {

@@ -16,7 +16,9 @@ import com.google.android.gcm.GCMRegistrar;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -26,6 +28,8 @@ import org.json.JSONObject;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 public class Menu extends Activity{
 
@@ -147,50 +151,88 @@ public class Menu extends Activity{
 
         utils = new Utils(getApplicationContext());
 
+        AsyncTask<String,Void,String> question = new AskInfos();
+        question.execute();
 
-        new RetreiveFeedTask().execute();
-    }
+        String ping_id = "";
+        try {
+            ping_id = question.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (ExecutionException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
-    class RetreiveFeedTask extends AsyncTask<String, Void, Object> {
-
-        @Override
-        protected Object doInBackground(String... params) {
-            Map<String,String> tmp = new HashMap();
-            tmp.put("phone_number", utils.getPhoneNumber());
-            JSONObject json = new JSONObject(tmp);
-            HttpResponse response = utils.getRequest("/devices/available",
-                    json);
-
-            Log.i("RESPONSE","GOT IT");
-                while(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK){
-                }
-            Log.i("LOOP OVER","LOOP OVER");
-
-            JSONArray json2 = null;
-            try {
-                json2 = new JSONArray(EntityUtils.toString(response
-                        .getEntity
-                                ()));
-            } catch (JSONException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        AsyncTask<String,Void,JSONArray> task = new GetInfos();
+        task.execute(ping_id);
+        try {
+            JSONArray array = task.get();
+            if(array != null){
+            JSONObject json;
+            for(int i=0; i < array.length(); i++){
+                json = array.getJSONObject(0);
+                Log.i("PING RESPONSE", json.getString("ip") + "    " + json
+                        .getString("phone_number"));
             }
-            JSONObject tmp_json;
-            for(int i=0; i<json2.length(); i++){
-                try {
-                    tmp_json = json2.getJSONObject(i);
-                    Log.i("GET RESPONSE", tmp_json.getString("ip") + "  " +
-                            tmp_json.getString("phone_number"));
-                } catch (JSONException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-
             }
-
-            return null;
+        } catch (InterruptedException e) {
+            Log.e("INTERRUPTED TASK", "Can't get JSONArray response");
+        } catch (ExecutionException e) {
+            Log.e("EXECUTION TASK", "Can't get JSONArray response");
+        } catch (JSONException e) {
+            Log.e("JSON TASK","Can't get JSONObject from array");
         }
     }
 
+    class AskInfos extends AsyncTask<String, Void, String> {
 
+        @Override
+        protected String doInBackground(String... params) {
+            String value = "";
+            if(params.length != 0){
+                value = params[0];
+            }
+
+            HttpResponse response = utils.getRequest("/devices/available",
+                    "phone_number",value);
+
+            String result = "";
+            if(response.getStatusLine().getStatusCode() == HttpStatus
+                    .SC_OK){
+                try {
+                    result = EntityUtils.toString(response.getEntity());
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+            return result;
+        }
+    }
+
+    class GetInfos extends AsyncTask<String, Void, JSONArray> {
+
+        @Override
+        protected JSONArray doInBackground(String... params) {
+            String value = "";
+            if(params.length != 0){
+                value = params[0];
+            }
+
+            HttpResponse response = utils.getRequest("/devices/infos",
+                    "ping_id",value);
+
+            ResponseHandler<String> handler = new BasicResponseHandler();
+
+            JSONArray array = null;
+            try {
+                array = new JSONArray(handler.handleResponse(response));
+            } catch (JSONException e) {
+                Log.e("PING RESPONSE JSON", "Can't parse JSONArray");
+            } catch (IOException e) {
+                Log.e("PING RESPONSE IO", "Can't parse JSONArray");
+            }
+
+            return array;
+        }
+    }
 }
