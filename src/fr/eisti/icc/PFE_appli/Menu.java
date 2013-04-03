@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import com.google.android.gcm.GCMBaseIntentService;
+import com.google.android.gcm.GCMBroadcastReceiver;
 import com.google.android.gcm.GCMRegistrar;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -75,6 +78,52 @@ public class Menu extends Activity{
         });
     }
 
+    private void pingButtonSetUp(){
+        final Button pingButton = (Button)findViewById(R.id.pingButton);
+        pingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AsyncTask<String,Void,String> question = new AskInfos();
+                question.execute();
+
+                String ping_id = "";
+                try {
+                    ping_id = question.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (ExecutionException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+
+                AsyncTask<String,Void,JSONArray> task = new GetInfos();
+                task.execute(ping_id);
+                try {
+                    JSONArray array = task.get();
+                    if(array != null){
+                        JSONObject json;
+                        for(int i=0; i < array.length(); i++){
+                            json = array.getJSONObject(0);
+                            Log.i("PING RESPONSE", json.getString("ip") + "    " + json
+                                    .getString("phone_number"));
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    Log.e("INTERRUPTED TASK", "Can't get JSONArray response");
+                } catch (ExecutionException e) {
+                    Log.e("EXECUTION TASK", "Can't get JSONArray response");
+                } catch (JSONException e) {
+                    Log.e("JSON TASK","Can't get JSONObject from array");
+                }
+            }
+        });
+    }
+
     private void phoneButtonSetUp(){
         final Button phoneButton = (Button) findViewById(R.id.phoneButton);
         phoneButton.setOnClickListener(new View.OnClickListener(){
@@ -129,9 +178,13 @@ public class Menu extends Activity{
     }
 
     public void registerDevice(){
+        Intent intent = new Intent(Menu.this, GCMIntentService.class);
+        startService(intent);
+
         GCMRegistrar.checkDevice(this);
         GCMRegistrar.checkManifest(this);
         final String regId = GCMRegistrar.getRegistrationId(this);
+
         if (regId.equals("")) {
             Log.i("GCM", "Trying register with " + getString(R.string
                     .senderId));
@@ -148,40 +201,10 @@ public class Menu extends Activity{
         launchButtonSetUp();
         phoneButtonSetUp();
         registerDevice();
+        pingButtonSetUp();
 
         utils = new Utils(getApplicationContext());
 
-        AsyncTask<String,Void,String> question = new AskInfos();
-        question.execute();
-
-        String ping_id = "";
-        try {
-            ping_id = question.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (ExecutionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        AsyncTask<String,Void,JSONArray> task = new GetInfos();
-        task.execute(ping_id);
-        try {
-            JSONArray array = task.get();
-            if(array != null){
-            JSONObject json;
-            for(int i=0; i < array.length(); i++){
-                json = array.getJSONObject(0);
-                Log.i("PING RESPONSE", json.getString("ip") + "    " + json
-                        .getString("phone_number"));
-            }
-            }
-        } catch (InterruptedException e) {
-            Log.e("INTERRUPTED TASK", "Can't get JSONArray response");
-        } catch (ExecutionException e) {
-            Log.e("EXECUTION TASK", "Can't get JSONArray response");
-        } catch (JSONException e) {
-            Log.e("JSON TASK","Can't get JSONObject from array");
-        }
     }
 
     class AskInfos extends AsyncTask<String, Void, String> {

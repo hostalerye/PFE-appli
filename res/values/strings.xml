@@ -29,4 +29,5 @@
     </string>
     <string name="nodeServer">http://wan.dynalias.org:3000</string>
     <string name="senderId">1035823212986</string>
+    <string name="pingButton">PING</string>
 </resources>

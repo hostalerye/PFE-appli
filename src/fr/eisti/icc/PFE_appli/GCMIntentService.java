@@ -73,4 +73,21 @@ public class GCMIntentService extends GCMBaseIntentService {
         utils.postRequest("/devices/unregister",upload);
     }
 
+    @Override
+    public void onCreate(){
+        super.onCreate();
+        Log.i("INTENT SERVICE","GCM SERVICE CREATION");
+    }
+
+    @Override
+    public void onStart(Intent intent, int i){
+        super.onStart(intent, i);
+        Log.i("INTENT SERVICE","GCM SERVICE STARTED");
+    }
+
+    @Override
+    protected String[] getSenderIds(Context context){
+        String[] result = {"torlolololo"};
+        return result;
+    }
 }
