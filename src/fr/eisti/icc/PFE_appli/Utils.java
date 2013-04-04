@@ -80,6 +80,10 @@ public class Utils {
 
     public void postRequest(String url, JSONObject json){
         HttpClient client = new DefaultHttpClient();
+        if(context == null){
+            Log.i("NULL CONTEXT","NULL CONTEXT");
+
+        }
         HttpPost post = new HttpPost(context.getResources().getString(R.string
                 .nodeServer)
                 + url);

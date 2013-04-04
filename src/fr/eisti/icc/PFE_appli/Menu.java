@@ -3,6 +3,7 @@ package fr.eisti.icc.PFE_appli;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,6 +38,7 @@ import java.util.concurrent.Executor;
 public class Menu extends Activity{
 
     Utils utils;
+    Intent GCMIntent;
 
     private String launchBenchmark(CharSequence bench_name){
         if(bench_name.equals("Pi")) {
@@ -178,20 +180,31 @@ public class Menu extends Activity{
     }
 
     public void registerDevice(){
-        Intent intent = new Intent(Menu.this, GCMIntentService.class);
-        startService(intent);
+        //GCMIntent = new Intent(this, GCMIntentService.class);
+        //GCMIntentService.runIntentInService(getBaseContext(),GCMIntent);
 
-        GCMRegistrar.checkDevice(this);
-        GCMRegistrar.checkManifest(this);
-        final String regId = GCMRegistrar.getRegistrationId(this);
+        //GCMRegistrar.checkDevice(this);
+        //GCMRegistrar.checkManifest(this);
+        //final String regId = GCMRegistrar.getRegistrationId(this);
 
-        if (regId.equals("")) {
+        //Log.i("REG ID",regId);
+
+       /* if (regId.equals("")) {
             Log.i("GCM", "Trying register with " + getString(R.string
                     .senderId));
-            GCMRegistrar.register(this, getString(R.string.senderId));
-        } else {
+            Intent registrationIntent = new Intent("com.google.android.c2dm.intent.REGISTER");
+            // sets the app name in the intent
+            registrationIntent.putExtra("app", PendingIntent.getBroadcast(this, 0, new Intent(), 0));
+            registrationIntent.putExtra("sender",
+                    getString(R.string.senderId));
+            startService(registrationIntent);
+         */
+       // } else {
             Log.i("REGISTER", "Already registered");
-        }
+            Intent unregIntent = new Intent("com.google.android.c2dm.intent.UNREGISTER");
+            unregIntent.putExtra("app", PendingIntent.getBroadcast(this, 0, new Intent(), 0));
+            startService(unregIntent);
+        //}
     }
 
     @Override
@@ -205,6 +218,11 @@ public class Menu extends Activity{
 
         utils = new Utils(getApplicationContext());
 
+    }
+
+    @Override
+    public void onDestroy(){
+        GCMIntentService.stopIntentService(getBaseContext(),GCMIntent);
     }
 
     class AskInfos extends AsyncTask<String, Void, String> {
