@@ -35,9 +35,11 @@ public class GCMIntentService extends IntentService {
         tmp.put("ip",utils.getIP());
 
         if(utils.getCheckBoxState()){
-            tmp.put("status_code","100");
-        } else if (utils.getBatteryLevel() < utils.BATTERY_ALERT){
-            tmp.put("status_code","101");
+            if (utils.getBatteryLevel() < utils.BATTERY_ALERT){
+                tmp.put("status_code","101");
+            } else {
+                tmp.put("status_code","100");
+            }
         } else {
             tmp.put("status_code","102");
         }
