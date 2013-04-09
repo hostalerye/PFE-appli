@@ -40,6 +40,7 @@ public class Menu extends Activity{
     Utils utils;
 
     private String launchBenchmark(CharSequence bench_name){
+        // Empty for now, will be used to plug other app
         if(bench_name.equals("Pi")) {
 
         } else if(bench_name.equals("Matrix")) {
@@ -91,15 +92,9 @@ public class Menu extends Activity{
                 try {
                     ping_id = question.get();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    Log.e("INTERRUPTED TASK", "Can't get JSONArray response");
                 } catch (ExecutionException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    Log.e("EXECUTION TASK", "Can't get JSONArray response");
                 }
 
                 AsyncTask<String,Void,JSONArray> task = new GetInfos();
@@ -157,9 +152,11 @@ public class Menu extends Activity{
                                     fos.write(phoneNumber.getBytes());
                                     fos.close();
                                 } catch (FileNotFoundException e) {
-                                    Log.d("DEBUG","Can't create File!");
+                                    Log.e("FILE NOT FOUND",
+                                            "Can't create File!");
                                 } catch (IOException e) {
-                                    Log.d("DEBUG","Can't make file output " +
+                                    Log.e("IOException",
+                                            "Can't make file output " +
                                             "stream!");
                                 }
                             }
@@ -195,7 +192,6 @@ public class Menu extends Activity{
 
     public void registerDevice(){
         final String regId = utils.getRegId();
-
         if (regId.equals("")) {
             Log.i("GCM", "Trying register with " + getString(R.string
                     .senderId));
@@ -237,7 +233,7 @@ public class Menu extends Activity{
                 try {
                     result = EntityUtils.toString(response.getEntity());
                 } catch (IOException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    Log.e("IO EXCEPTION","Can't get response in AskInfos");
                 }
             }
             return result;

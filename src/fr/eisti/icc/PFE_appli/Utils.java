@@ -115,7 +115,7 @@ public class Utils {
         try {
             client.execute(post);
         } catch (IOException e) {
-            Log.d("IO on POST","Can't execute post request to node server");
+            Log.e("IO on POST","Can't execute post request to node server");
         }
     }
 
@@ -136,7 +136,7 @@ public class Utils {
         try {
             response = client.execute(get);
         } catch (IOException e) {
-            Log.d("IO on GET","Can't execute post request to node server");
+            Log.e("IO on GET","Can't execute post request to node server");
         }
 
         return response;

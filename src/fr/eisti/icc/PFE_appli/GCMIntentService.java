@@ -19,13 +19,13 @@ public class GCMIntentService extends IntentService {
     private static PowerManager.WakeLock sWakeLock;
     private static final Object LOCK = GCMIntentService.class;
 
-    private GCMIntentService(){
+    public GCMIntentService(){
         super("GCMIntentService");
     }
 
-   /* private GCMIntentService(String name) {
+    public GCMIntentService(String name) {
         super(name);
-    }*/
+    }
 
     private void returnPing(Bundle extras){
         Log.i("PING MESSAGE","TRYING");
@@ -42,18 +42,6 @@ public class GCMIntentService extends IntentService {
         Log.i("RETURN PING","SUCCESS");
     }
 
-    @Override
-    public void onCreate(){
-        super.onCreate();
-        Log.i("INTENT SERVICE","GCM SERVICE CREATION");
-    }
-
-    @Override
-    public void onStart(Intent intent, int i){
-        super.onStart(intent, i);
-        Log.i("INTENT SERVICE","GCM SERVICE STARTED");
-    }
-
     static void runIntentInService(Context context, Intent intent) {
         synchronized(LOCK) {
             if (sWakeLock == null) {
@@ -65,10 +53,6 @@ public class GCMIntentService extends IntentService {
         intent.setClassName(context, GCMIntentService.class.getName());
         utils = new Utils(context);
         context.startService(intent);
-    }
-
-    static void stopIntentService(Context context, Intent intent){
-        context.stopService(intent);
     }
 
     @Override
@@ -128,7 +112,7 @@ public class GCMIntentService extends IntentService {
 
         // last operation (registration or unregistration) returned an error;
         if (error != null) {
-            Log.i("GCM ERROR", "Received error: " + error);
+            Log.e("GCM ERROR", "Received error: " + error);
         }
     }
 
