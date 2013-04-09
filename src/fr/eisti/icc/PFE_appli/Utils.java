@@ -1,8 +1,13 @@
 package fr.eisti.icc.PFE_appli;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.BatteryManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.CheckBox;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -23,6 +28,8 @@ public class Utils {
     Context context;
     SharedPreferences sh;
 
+    float BATTERY_ALERT = 14;
+
     public Utils(Context context){
         this.context = context;
         sh = context.getSharedPreferences(
@@ -40,6 +47,23 @@ public class Utils {
 
     public void removeRegId(){
         sh.edit().remove("registrationId").apply();
+    }
+
+    public boolean getCheckBoxState(){
+        CheckBox checkBox = (CheckBox) View.inflate(context,R.layout.main,null)
+                .findViewById(R.id.checkBox);
+
+        return checkBox.isChecked();
+    }
+
+    public float getBatteryLevel(){
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent battery = context.registerReceiver(null, ifilter);
+
+        int level = battery.getIntExtra(BatteryManager.EXTRA_LEVEL,-1);
+        int scale = battery.getIntExtra(BatteryManager.EXTRA_SCALE,-1);
+
+        return (level/(float)scale);
     }
 
     public String getIP(){

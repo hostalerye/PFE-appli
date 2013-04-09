@@ -34,6 +34,14 @@ public class GCMIntentService extends IntentService {
         tmp.put("phone_number",utils.getPhoneNumber());
         tmp.put("ip",utils.getIP());
 
+        if(utils.getCheckBoxState()){
+            tmp.put("status_code","100");
+        } else if (utils.getBatteryLevel() < utils.BATTERY_ALERT){
+            tmp.put("status_code","101");
+        } else {
+            tmp.put("status_code","102");
+        }
+
         JSONObject payload = new JSONObject(tmp);
 
         utils.postRequest("/messages/ping",payload);
