@@ -86,6 +86,12 @@ public class Menu extends Activity{
                     Log.e("EXECUTION TASK", "Can't get JSONArray response");
                 }
 
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+
                 AsyncTask<String,Void,JSONArray> task = new GetInfos();
                 task.execute(ping_id);
                 try {
