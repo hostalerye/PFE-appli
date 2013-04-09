@@ -6,8 +6,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
 import android.util.Log;
-import android.view.View;
-import android.widget.CheckBox;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -49,13 +47,6 @@ public class Utils {
         sh.edit().remove("registrationId").apply();
     }
 
-    public boolean getCheckBoxState(){
-        CheckBox checkBox = (CheckBox) View.inflate(context,R.layout.main,null)
-                .findViewById(R.id.checkBox);
-
-        return checkBox.isChecked();
-    }
-
     public float getBatteryLevel(){
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
         Intent battery = context.registerReceiver(null, ifilter);
@@ -64,6 +55,14 @@ public class Utils {
         int scale = battery.getIntExtra(BatteryManager.EXTRA_SCALE,-1);
 
         return (level/(float)scale);
+    }
+
+    public void setCheckBoxState(boolean state){
+        sh.edit().putBoolean("checkbox_state",state).apply();
+    }
+
+    public boolean getCheckBoxState(){
+        return sh.getBoolean("checkbox_state",false);
     }
 
     public String getIP(){

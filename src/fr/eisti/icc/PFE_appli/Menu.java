@@ -11,9 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ResponseHandler;
@@ -111,6 +109,16 @@ public class Menu extends Activity{
         });
     }
 
+    private void checkBoxSetUp(){
+        final CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox);
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                utils.setCheckBoxState(isChecked);
+            }
+        });
+    }
+
     private void phoneButtonSetUp(){
         final Button phoneButton = (Button) findViewById(R.id.phoneButton);
         phoneButton.setOnClickListener(new View.OnClickListener(){
@@ -199,6 +207,7 @@ public class Menu extends Activity{
         utils = new Utils(getApplicationContext());
 
         setContentView(R.layout.main);
+        checkBoxSetUp();
         launchButtonSetUp();
         phoneButtonSetUp();
         pingButtonSetUp();
