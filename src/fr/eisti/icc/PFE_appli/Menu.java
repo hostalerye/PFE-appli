@@ -86,7 +86,7 @@ public class Menu extends Activity{
             @Override
             public void onClick(View v) {
                 AsyncTask<String,Void,String> question = new AskInfos();
-                question.execute();
+                question.execute(utils.getRegId());
 
                 String ping_id = "";
                 try {
@@ -225,7 +225,7 @@ public class Menu extends Activity{
             }
 
             HttpResponse response = utils.getRequest("/devices/available",
-                    "phone_number",value);
+                    "reg_id",value);
 
             String result = "";
             if(response.getStatusLine().getStatusCode() == HttpStatus
