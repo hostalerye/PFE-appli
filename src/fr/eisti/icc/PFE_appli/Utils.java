@@ -10,6 +10,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONObject;
@@ -58,7 +59,7 @@ public class Utils {
     }
 
     public void setCheckBoxState(boolean state){
-        sh.edit().putBoolean("checkbox_state",state).apply();
+        sh.edit().putBoolean("checkbox_state", state).apply();
     }
 
     public boolean getCheckBoxState(){
@@ -152,10 +153,36 @@ public class Utils {
         try {
             response = client.execute(get);
         } catch (IOException e) {
-            Log.e("IO on GET","Can't execute post request to node server");
+            Log.e("IO on GET","Can't execute get request to node server");
         }
 
         return response;
     }
 
+    public HttpResponse putRequest(String url, JSONObject json){
+        HttpClient client = new DefaultHttpClient();
+        HttpPut put = new HttpPut(context.getResources().getString(R.string
+                .nodeServer)
+                + url);
+
+        try {
+            // Add the JSON to the PUT request
+            StringEntity se = new StringEntity(json.toString());
+            put.setEntity(se);
+            put.setHeader("Content-type","application/json");
+            put.setHeader("Accept","application/json");
+        } catch (UnsupportedEncodingException e) {
+            Log.e("Encoding error", "Can't change JSON object to string " +
+                    "entity");
+        }
+
+        HttpResponse response = null;
+        try {
+            response = client.execute(put);
+        } catch (IOException e) {
+            Log.e("IO on PUT","Can't execute put request to node server");
+        }
+
+        return response;
+    }
 }

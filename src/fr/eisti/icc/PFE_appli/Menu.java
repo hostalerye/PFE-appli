@@ -158,6 +158,9 @@ public class Menu extends Activity{
                                             "Can't make file output " +
                                             "stream!");
                                 }
+
+                                AsyncTask<String,Void,String> task = new PutPhoneNumber();
+                                task.execute(utils.getRegId(), phoneNumber);
                             }
                         });
 
@@ -264,6 +267,36 @@ public class Menu extends Activity{
             }
 
             return array;
+        }
+    }
+
+    class PutPhoneNumber extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            String value = "";
+            JSONObject putParams = new JSONObject();
+            if(params.length >= 2){
+                try {
+                    putParams.put("reg_id", params[0]);
+                    putParams.put("new_phone_number", params[1]);
+                } catch (JSONException e) {
+                    Log.e("JSON error", "Error while adding params");  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+            HttpResponse response = utils.putRequest("/devices/updatePhoneNumber",
+                    putParams);
+
+            String result = "";
+            if(response.getStatusLine().getStatusCode() == HttpStatus
+                    .SC_OK){
+                try {
+                    result = EntityUtils.toString(response.getEntity());
+                } catch (IOException e) {
+                    Log.e("IO EXCEPTION","Can't get response in AskInfos");
+                }
+            }
+            return result;
         }
     }
 }
