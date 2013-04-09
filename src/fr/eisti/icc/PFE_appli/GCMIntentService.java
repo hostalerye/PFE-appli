@@ -19,13 +19,13 @@ public class GCMIntentService extends IntentService {
     private static PowerManager.WakeLock sWakeLock;
     private static final Object LOCK = GCMIntentService.class;
 
-    public GCMIntentService(){
+    private GCMIntentService(){
         super("GCMIntentService");
     }
 
-    public GCMIntentService(String name) {
+   /* private GCMIntentService(String name) {
         super(name);
-    }
+    }*/
 
     private void returnPing(Bundle extras){
         Log.i("PING MESSAGE","TRYING");
@@ -99,6 +99,8 @@ public class GCMIntentService extends IntentService {
 
         if (registrationId != null) {
             // registration succeeded
+            // commit to shared preferences
+            utils.setRegId(registrationId);
             // Fill map with infos
             Map<String, String> tmp = new HashMap<String,String>();
             tmp.put("reg_id",registrationId);
@@ -114,7 +116,9 @@ public class GCMIntentService extends IntentService {
             // unregistration succeeded
             // Fill map with infos
             Map<String, String> tmp = new HashMap<String,String>();
-            tmp.put("phone_number",utils.getPhoneNumber());
+            tmp.put("reg_id", utils.getRegId());
+            // remove from shared preferences
+            utils.removeRegId();
 
             // Transform map into JSONObject
             JSONObject upload = new JSONObject(tmp);

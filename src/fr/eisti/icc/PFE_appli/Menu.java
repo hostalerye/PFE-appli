@@ -38,7 +38,6 @@ import java.util.concurrent.Executor;
 public class Menu extends Activity{
 
     Utils utils;
-    Intent GCMIntent;
 
     private String launchBenchmark(CharSequence bench_name){
         if(bench_name.equals("Pi")) {
@@ -179,50 +178,45 @@ public class Menu extends Activity{
 
     }
 
+    private void registerGCM(){
+        Intent registrationIntent = new Intent("com.google.android.c2dm.intent.REGISTER");
+        // sets the app name in the intent
+        registrationIntent.putExtra("app", PendingIntent.getBroadcast(this, 0, new Intent(), 0));
+        registrationIntent.putExtra("sender",
+                getString(R.string.senderId));
+        startService(registrationIntent);
+    }
+
+    private void unregisterGCM(){
+        Intent unregIntent = new Intent("com.google.android.c2dm.intent.UNREGISTER");
+        unregIntent.putExtra("app", PendingIntent.getBroadcast(this, 0, new Intent(), 0));
+        startService(unregIntent);
+    }
+
     public void registerDevice(){
-        //GCMIntent = new Intent(this, GCMIntentService.class);
-        //GCMIntentService.runIntentInService(getBaseContext(),GCMIntent);
+        final String regId = utils.getRegId();
 
-        //GCMRegistrar.checkDevice(this);
-        //GCMRegistrar.checkManifest(this);
-        //final String regId = GCMRegistrar.getRegistrationId(this);
-
-        //Log.i("REG ID",regId);
-
-       /* if (regId.equals("")) {
+        if (regId.equals("")) {
             Log.i("GCM", "Trying register with " + getString(R.string
                     .senderId));
-            Intent registrationIntent = new Intent("com.google.android.c2dm.intent.REGISTER");
-            // sets the app name in the intent
-            registrationIntent.putExtra("app", PendingIntent.getBroadcast(this, 0, new Intent(), 0));
-            registrationIntent.putExtra("sender",
-                    getString(R.string.senderId));
-            startService(registrationIntent);
-         */
-       // } else {
+            registerGCM();
+        } else {
             Log.i("REGISTER", "Already registered");
-            Intent unregIntent = new Intent("com.google.android.c2dm.intent.UNREGISTER");
-            unregIntent.putExtra("app", PendingIntent.getBroadcast(this, 0, new Intent(), 0));
-            startService(unregIntent);
-        //}
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
-        launchButtonSetUp();
-        phoneButtonSetUp();
-        registerDevice();
-        pingButtonSetUp();
 
         utils = new Utils(getApplicationContext());
 
-    }
+        setContentView(R.layout.main);
+        launchButtonSetUp();
+        phoneButtonSetUp();
+        pingButtonSetUp();
 
-    @Override
-    public void onDestroy(){
-        GCMIntentService.stopIntentService(getBaseContext(),GCMIntent);
+        registerDevice();
     }
 
     class AskInfos extends AsyncTask<String, Void, String> {

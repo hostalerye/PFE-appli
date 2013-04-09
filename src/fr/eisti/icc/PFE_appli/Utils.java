@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.util.Log;
 import org.apache.http.HttpResponse;
@@ -27,9 +28,25 @@ import java.util.List;
 public class Utils {
 
     Context context;
+    SharedPreferences sh;
 
     public Utils(Context context){
         this.context = context;
+        sh = context.getSharedPreferences(
+                context.getString(R.string.sharedPref), 0);
+
+    }
+
+    public String getRegId(){
+        return sh.getString("registrationId","");
+    }
+
+    public void setRegId(String registrationId){
+        sh.edit().putString("registrationId",registrationId).apply();
+    }
+
+    public void removeRegId(){
+        sh.edit().remove("registrationId").apply();
     }
 
     public String getIP(){
@@ -80,10 +97,6 @@ public class Utils {
 
     public void postRequest(String url, JSONObject json){
         HttpClient client = new DefaultHttpClient();
-        if(context == null){
-            Log.i("NULL CONTEXT","NULL CONTEXT");
-
-        }
         HttpPost post = new HttpPost(context.getResources().getString(R.string
                 .nodeServer)
                 + url);
