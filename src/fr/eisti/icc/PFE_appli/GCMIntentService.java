@@ -36,8 +36,8 @@ public class GCMIntentService extends IntentService {
 
         if(utils.getCheckBoxState()){
             tmp.put("status_code","100");
-        /*} else if (utils.getBatteryLevel() < utils.BATTERY_ALERT){
-            tmp.put("status_code","101");*/
+        } else if (utils.getBatteryLevel() < utils.BATTERY_ALERT){
+            tmp.put("status_code","101");
         } else {
             tmp.put("status_code","102");
         }
