@@ -66,6 +66,10 @@ public class Utils {
         return sh.getBoolean("checkbox_state",false);
     }
 
+    public void removeCheckBoxState(){
+        sh.edit().remove("checkbox_state").apply();
+    }
+
     public String getIP(){
         String sAddr = "";
         try {

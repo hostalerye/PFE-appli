@@ -224,6 +224,13 @@ public class Menu extends Activity{
         registerDevice();
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        utils.removeCheckBoxState();
+        Log.i("REMOVED CHECKBOX STATE","REMOVED CHECKBOX STATE");
+    }
+
     class AskInfos extends AsyncTask<String, Void, String> {
 
         @Override
