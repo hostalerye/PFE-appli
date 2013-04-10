@@ -206,6 +206,21 @@ public class Menu extends Activity{
             registerGCM();
         } else {
             Log.i("REGISTER", "Already registered");
+            AsyncTask<String,Void,Boolean> task = new CheckDatabase();
+            task.execute(regId, utils.getPhoneNumber());
+            try {
+                boolean result = task.get();
+                if(!result){
+                    Log.i("FAIL CHECK","Failed to check or update database, " +
+                            "please check the node server");
+                }
+            } catch (InterruptedException e) {
+                Log.e("INTERRUPTED","Couldn't check the database");
+            } catch (ExecutionException e) {
+                Log.e("EXECUTION EXCEPTION","Couldn't check the database");
+            }
+
+
         }
     }
 
@@ -308,6 +323,32 @@ public class Menu extends Activity{
                 } catch (IOException e) {
                     Log.e("IO EXCEPTION","Can't get response in AskInfos");
                 }
+            }
+            return result;
+        }
+    }
+
+    class CheckDatabase extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            String value = "";
+            JSONObject json = new JSONObject();
+            if(params.length >= 2){
+                try {
+                    json.put("reg_id", params[0]);
+                    json.put("phone_number", params[1]);
+                } catch (JSONException e) {
+                    Log.e("JSON error", "Error while adding params");
+                }
+            }
+            HttpResponse response = utils.postRequest(
+                    "/devices/check_registration",json);
+
+            boolean result = false;
+            int status = response.getStatusLine().getStatusCode();
+            if(status == HttpStatus.SC_OK || status == HttpStatus.SC_NOT_MODIFIED){
+                result = true;
             }
             return result;
         }

@@ -116,7 +116,7 @@ public class Utils {
         return result;
     }
 
-    public void postRequest(String url, JSONObject json){
+    public HttpResponse postRequest(String url, JSONObject json){
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost(context.getResources().getString(R.string
                 .nodeServer)
@@ -133,11 +133,14 @@ public class Utils {
                     "entity");
         }
 
+        HttpResponse response = null;
         try {
-            client.execute(post);
+            response = client.execute(post);
         } catch (IOException e) {
             Log.e("IO on POST","Can't execute post request to node server");
         }
+
+        return response;
     }
 
     public HttpResponse getRequest(String url, String label, String value){
