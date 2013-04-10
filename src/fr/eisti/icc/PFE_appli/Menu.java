@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 public class Menu extends Activity{
 
     Utils utils;
+    public final static String PING_RESULT = "fr.eisti.icc.PFE_appli.PING_RESULT";
 
     private String launchBenchmark(CharSequence bench_name){
         // Empty for now, will be used to plug other app
@@ -98,11 +99,16 @@ public class Menu extends Activity{
                     JSONArray array = task.get();
                     if(array != null){
                         JSONObject json;
+                        String result = "";
                         for(int i=0; i < array.length(); i++){
                             json = array.getJSONObject(0);
+                            result += json.getString("ip")+" "+json.getString("phone_number")+"\n";
                             Log.i("PING RESPONSE", json.getString("ip") + "    " + json
                                     .getString("phone_number"));
                         }
+                        Intent intent = new Intent(Menu.this, PingResult.class);
+                        intent.putExtra(PING_RESULT, array.toString());
+                        startActivity(intent);
                     }
                 } catch (InterruptedException e) {
                     Log.e("INTERRUPTED TASK", "Can't get JSONArray response");
